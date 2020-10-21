@@ -24,7 +24,7 @@ You need to create a `configuration.json` in the same directory as the executabl
 
 ## Notices
 #### Third party libraries
-- OpenHardwareMonitorLib.dll: [Website](https://openhardwaremonitor.org/), [Sourcecode](https://github.com/openhardwaremonitor/openhardwaremonitor)
+- MonitorPCModule\MonitorPCModule\external\OpenHardwareMonitorLib.dll : [Website](https://openhardwaremonitor.org/), [Sourcecode](https://github.com/openhardwaremonitor/openhardwaremonitor)
 
 #### License 
 This project is licensed under the [MIT license](https://opensource.org/licenses/MIT). 
