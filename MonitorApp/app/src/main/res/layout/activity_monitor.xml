@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fullscreen_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Monitor">
+
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/CPU_TEMP"
+            android:layout_width="600dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="150dp"
+            android:gravity="center"
+            android:text="CPU: 40°C"
+            android:textAllCaps="true"
+            android:textColor="#FFECEC"
+            android:textSize="80sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/GPU_TEMP"
+            android:layout_width="600dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="150dp"
+            android:gravity="center"
+            android:text="GPU: 40°C"
+            android:textColor="#FFFFFF"
+            android:textSize="80sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/CPU_TEMP" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
