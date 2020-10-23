@@ -122,7 +122,7 @@ public class Monitor extends AppCompatActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        Thread server = new Server();
+        Thread server = new TemperatureServer();
         server.start();
         delayedHide(100);
     }
@@ -150,7 +150,7 @@ public class Monitor extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
-    private class Server extends Thread {
+    private class TemperatureServer extends Thread {
         private boolean keepRunning = true;
         private float lastCpuData;
 
@@ -200,6 +200,5 @@ public class Monitor extends AppCompatActivity {
             return lastGpuData;
         }
     }
-
 
 }
