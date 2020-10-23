@@ -24,25 +24,13 @@ namespace MonitorPCModule
         public void Start()
         {
             byte[] send_buffer = File.ReadAllBytes(JpgPath);
-            Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint endPoint = new IPEndPoint(findIp(Hostname), Port);
-            
-            sock.SendTo(send_buffer, endPoint);
+            TcpClient client = new TcpClient(Hostname, Port);
+            NetworkStream stream = client.GetStream();
+            stream.Write(send_buffer, 0, send_buffer.Length);
+            stream.Close();
+            client.Close();
         }
         
-        private IPAddress findIp(String hostname)
-        {
 
-            IPHostEntry hostEntry = Dns.GetHostEntry(hostname);
-
-            foreach (IPAddress ip in hostEntry.AddressList)
-            {
-                if (!ip.ToString().Contains(":"))
-                {
-                    return ip;
-                }
-            }
-            return null;
-        }
     }
 }
