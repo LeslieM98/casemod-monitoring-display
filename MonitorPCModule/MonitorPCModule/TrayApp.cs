@@ -26,10 +26,22 @@ namespace MonitorPCModule
                 Visible = true
             };
 
-            IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("configuration.json").Build();
+            try
+            {
+                IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("configuration.json").Build();
+                var device_hostname = config["device_hostname"];
+                var port = int.Parse(config["port"]);
+                var update_interval = int.Parse(config["update_in_ms"]);
 
-            network = new NetworkTransmitter(config["device_hostname"], int.Parse(config["port"]), int.Parse(config["update_in_ms"]));
-            network.Start();
+                network = new NetworkTransmitter(device_hostname, port, update_interval);
+                network.Start();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                trayIcon.Visible = false;
+                System.Environment.Exit(1);  
+            }
         }
 
         void ShowTip(object sender, EventArgs e)
