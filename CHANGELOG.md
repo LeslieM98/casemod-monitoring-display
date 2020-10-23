@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Desktop Client
 
+- config option "background_image_path" to send a JPG file to the android device. The android device will then change its background to this file.
 - Any exception or error is now displayed
 
 ## [0.1.0] - 21.10.2020

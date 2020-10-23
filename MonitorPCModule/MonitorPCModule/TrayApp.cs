@@ -32,6 +32,13 @@ namespace MonitorPCModule
                 var device_hostname = config["device_hostname"];
                 var port = int.Parse(config["port"]);
                 var update_interval = int.Parse(config["update_in_ms"]);
+                
+                if (config["background_image_path"] != null)
+                {
+                    var backgroundImagePath = config["background_image_path"];
+                    new BackgroundTransmitter(device_hostname, port, backgroundImagePath).Start();
+                }
+
 
                 network = new NetworkTransmitter(device_hostname, port, update_interval);
                 network.Start();
