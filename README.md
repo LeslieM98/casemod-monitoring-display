@@ -13,10 +13,12 @@ You need to create a `configuration.json` in the same directory as the executabl
 {
   "device_hostname": "hostname_of_the_android_device",
   "port": 8080,
-  "update_in_ms": 1000
+  "update_in_ms": 1000,
+  "background_image_path": "Path\\to\\your\\custom\\app\\background"
 }
 
 ```
+The last configuration string is optional and can be left out. The app will still work as expected
 
 
 ## Pictures
