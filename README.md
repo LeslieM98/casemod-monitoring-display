@@ -18,7 +18,7 @@ You need to create a `configuration.json` in the same directory as the executabl
 }
 
 ```
-The last configuration string is optional and can be left out. The app will still work as expected
+The last configuration string is optional and can be left out. The app will still work as expected.
 
 
 ## Pictures
