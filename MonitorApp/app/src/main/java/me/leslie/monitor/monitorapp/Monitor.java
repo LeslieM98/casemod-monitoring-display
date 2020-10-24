@@ -1,21 +1,32 @@
 package me.leslie.monitor.monitorapp;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -96,6 +107,7 @@ public class Monitor extends AppCompatActivity {
 
     private TextView cpuTemp;
     private TextView gpuTemp;
+    private FrameLayout background;
 
 
     @Override
@@ -109,6 +121,7 @@ public class Monitor extends AppCompatActivity {
 
         cpuTemp = findViewById(R.id.CPU_TEMP);
         gpuTemp = findViewById(R.id.GPU_TEMP);
+        background = findViewById(R.id.fullscreen_content);
 
         cpuTemp.setText("CPU: NO DATA");
         gpuTemp.setText("GPU: NO DATA");
@@ -122,8 +135,12 @@ public class Monitor extends AppCompatActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        Thread server = new TemperatureServer();
-        server.start();
+        Thread temperatureServer = new TemperatureServer();
+        Thread backgroundImageServer = new BackgroundImageServer();
+        temperatureServer.start();
+        backgroundImageServer.start();
+
+
         delayedHide(100);
     }
 
@@ -198,6 +215,66 @@ public class Monitor extends AppCompatActivity {
 
         public float getLastGpuData() {
             return lastGpuData;
+        }
+    }
+
+    private class BackgroundImageServer extends Thread {
+        private boolean keepRunning = true;
+        private List<Byte> fetchedPicture;
+        public void run() {
+            try {
+                ServerSocket server = new ServerSocket(8080);
+                while(keepRunning) {
+                    Socket connection = server.accept();
+                    InputStream dataStream = connection.getInputStream();
+                    fetchedPicture = new ArrayList<>();
+                    int read = 0;
+                    while((read = dataStream.read()) >= 0){
+                        fetchedPicture.add((byte) read);
+                    }
+                    Byte[] rawPicture = fetchedPicture.toArray(new Byte[0]);
+                    File writtenImage = writeToFile(deBoxByte(rawPicture));
+                    changeBackgroundTo(writtenImage);
+                }
+                server.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        private void changeBackgroundTo(File image){
+            final Drawable backgroundImage = Drawable.createFromPath(image.getAbsolutePath());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    background.setBackground(backgroundImage);
+                }
+            });
+
+        }
+
+        private byte[] deBoxByte(Byte[] data){
+            byte[] r = new byte[data.length];
+            for(int i = 0; i < data.length; i++){
+                r[i] = data[i];
+            }
+            return r;
+        }
+
+        private File writeToFile(byte[] data) throws IOException{
+            File outputFile = File.createTempFile("TransmittedBackgroundImage", ".png");
+            if (!outputFile.createNewFile()) {
+                outputFile.delete();
+                outputFile.createNewFile();
+            }
+            FileOutputStream writer = new FileOutputStream(outputFile);
+            writer.write(data);
+            writer.close();
+            return outputFile;
+        }
+
+        private void kill(){
+            keepRunning = false;
         }
     }
 

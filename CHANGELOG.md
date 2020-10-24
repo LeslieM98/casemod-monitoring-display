@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### Android App
+- Android device now listens for new background images (as PNG) from the desktop client.
+
 #### Desktop Client
 
 - config option "background_image_path" to send a PNG file to the android device. The android device will then change its background to this file.
