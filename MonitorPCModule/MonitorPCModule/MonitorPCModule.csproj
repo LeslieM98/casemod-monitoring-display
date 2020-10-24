@@ -103,6 +103,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackgroundTransmitter.cs" />
     <Compile Include="CPU.cs" />
     <Compile Include="GPU.cs" />
     <Compile Include="NetworkTransmitter.cs" />
