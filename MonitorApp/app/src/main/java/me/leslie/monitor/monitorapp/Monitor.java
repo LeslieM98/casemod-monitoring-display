@@ -1,13 +1,13 @@
 package me.leslie.monitor.monitorapp;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -15,7 +15,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -31,6 +30,9 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -111,7 +113,10 @@ public class Monitor extends AppCompatActivity {
 
     private TextView cpuTemp;
     private TextView gpuTemp;
+    private GifImageView gifImageView;
     private FrameLayout background;
+
+    private Context context = this;
 
 
     @Override
@@ -125,6 +130,7 @@ public class Monitor extends AppCompatActivity {
 
         cpuTemp = findViewById(R.id.CPU_TEMP);
         gpuTemp = findViewById(R.id.GPU_TEMP);
+        gifImageView = findViewById(R.id.GIF);
         background = findViewById(R.id.fullscreen_content);
 
         cpuTemp.setText("CPU: NO DATA");
@@ -267,6 +273,7 @@ public class Monitor extends AppCompatActivity {
             }
         }
 
+        // TODO: Optimize, throws out of memory error
         private List<Byte> readReceivedData() throws IOException{
             InputStream dataStream = WORKER_CONNECTION.getInputStream();
             List<Byte> receivedData = new ArrayList<>();;
@@ -358,12 +365,13 @@ public class Monitor extends AppCompatActivity {
 
         private void staticBackgroundImage(byte[] data){
             try {
-                File image = writeToFile(data);
+                File image = writeToFile(data, ".png");
                 final Drawable backgroundImage = Drawable.createFromPath(image.getAbsolutePath());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         background.setBackground(backgroundImage);
+                        gifImageView.setVisibility(View.GONE);
                     }
                 });
             } catch (IOException e){
@@ -371,8 +379,8 @@ public class Monitor extends AppCompatActivity {
             }
         }
 
-        private File writeToFile(byte[] data) throws IOException{
-            File outputFile = File.createTempFile("TransmittedBackgroundImage", ".png");
+        private File writeToFile(byte[] data, String fileEnding) throws IOException{
+            File outputFile = File.createTempFile("TransmittedBackgroundImage", fileEnding);
             if (!outputFile.createNewFile()) {
                 outputFile.delete();
                 outputFile.createNewFile();
@@ -384,7 +392,20 @@ public class Monitor extends AppCompatActivity {
         }
 
         private void gifBackgroundImage(byte[] data){
-            throw new UnsupportedOperationException("TBA");
+            try {
+                File gif = writeToFile(data, ".gif");
+                final GifDrawable gifDrawable = new GifDrawable(gif.getAbsolutePath());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gifImageView.setBackground(gifDrawable);
+
+                        gifImageView.setVisibility(View.VISIBLE);
+                    }
+                });
+            }catch(Exception e){
+                Log.e("Monitor-Gif", e.getMessage());
+            }
         }
 
         private byte[] deBoxByte(Byte[] data){
