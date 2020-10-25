@@ -23,7 +23,10 @@ namespace MonitorPCModule
 
         public void Start()
         {
-            byte[] send_buffer = File.ReadAllBytes(JpgPath);
+            byte[] read_file = File.ReadAllBytes(JpgPath);
+            byte[] send_buffer = new byte[read_file.Length + 1];
+            send_buffer[0] = 0x01; // 0x01 = static image
+            Array.Copy(read_file, 0, send_buffer, 1, read_file.Length);
             TcpClient client = new TcpClient(Hostname, Port);
             NetworkStream stream = client.GetStream();
             stream.Write(send_buffer, 0, send_buffer.Length);
