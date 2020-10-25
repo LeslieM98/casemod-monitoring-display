@@ -258,6 +258,8 @@ public class Monitor extends AppCompatActivity {
         }
     }
 
+
+
     private class TCPWorker extends Thread {
         private final Socket WORKER_CONNECTION;
         public TCPWorker(Socket workerConnection){
@@ -266,38 +268,43 @@ public class Monitor extends AppCompatActivity {
 
         public void run(){
             try {
-                List<Byte> receivedData = readReceivedData();
+                ReceivedData receivedData = readReceivedData();
                 parseData(receivedData);
             } catch (IOException e){
                 Log.e("Monitor-TCPWorker", e.getMessage());
             }
         }
 
-        // TODO: Optimize, throws out of memory error
-        private List<Byte> readReceivedData() throws IOException{
-            InputStream dataStream = WORKER_CONNECTION.getInputStream();
-            List<Byte> receivedData = new ArrayList<>();;
-            int read = 0;
-            while((read = dataStream.read()) >= 0){
-                receivedData.add((byte) read);
-            }
+        private ReceivedData readReceivedData() throws IOException{
+            ReceivedData receivedData = new ReceivedData(WORKER_CONNECTION.getInputStream());
+            WORKER_CONNECTION.close();
             return receivedData;
         }
 
-        private void parseData(List<Byte> input){
-            byte type = input.get(0);
-            byte[] data = deBoxByte(input.subList(1, input.size()).toArray(new Byte[0]));
-            switch (type){
-                case 0: layoutConfig(data); break;
-                case 1: staticBackgroundImage(data); break;
-                case 2: gifBackgroundImage(data); break;
-                default: Log.e("Monitor-TCPWorker", "Invalid Package received: " + type);
+        private void parseData(ReceivedData input){
+            try {
+                byte type = input.getPrefix();
+                switch (type) {
+                    case 0:
+                        layoutConfig(input);
+                        break;
+                    case 1:
+                        staticBackgroundImage(input);
+                        break;
+                    case 2:
+                        gifBackgroundImage(input);
+                        break;
+                    default:
+                        Log.e("Monitor-TCPWorker", "Invalid Package received: " + type);
+                }
+            } catch (Exception e){
+                Log.e("Monitor-TCPWorker", e.getMessage());
             }
         }
 
-        private void layoutConfig(byte[] data){
+        private void layoutConfig(ReceivedData data){
             try {
-                String json = convertByteArrayToString(data);
+                String json = convertByteArrayToString(data.getData());
                 JSONObject parsedJson = new JSONObject(json);
                 final int gpuYFromBottom = parsedJson.getInt("gpu_y_from_bottom");
                 final int cpuYFromTop = parsedJson.getInt("cpu_y_from_top");
@@ -363,20 +370,13 @@ public class Monitor extends AppCompatActivity {
             return sb.toString();
         }
 
-        private void staticBackgroundImage(byte[] data){
-            try {
-                File image = writeToFile(data, ".png");
-                final Drawable backgroundImage = Drawable.createFromPath(image.getAbsolutePath());
-                runOnUiThread(new Runnable() {
+        private void staticBackgroundImage(ReceivedData data){
+            final Drawable backgroundImage = Drawable.createFromPath(data.getPath());
+            runOnUiThread(new Runnable() {
                     @Override
-                    public void run() {
-                        background.setBackground(backgroundImage);
-                        gifImageView.setVisibility(View.GONE);
-                    }
+                    public void run() { background.setBackground(backgroundImage);
+                    gifImageView.setVisibility(View.GONE); }
                 });
-            } catch (IOException e){
-                Log.e("Monitor-SBackground", e.getMessage());
-            }
         }
 
         private File writeToFile(byte[] data, String fileEnding) throws IOException{
@@ -391,10 +391,9 @@ public class Monitor extends AppCompatActivity {
             return outputFile;
         }
 
-        private void gifBackgroundImage(byte[] data){
+        private void gifBackgroundImage(ReceivedData data){
             try {
-                File gif = writeToFile(data, ".gif");
-                final GifDrawable gifDrawable = new GifDrawable(gif.getAbsolutePath());
+                final GifDrawable gifDrawable = new GifDrawable(data.getPath());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
