@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.DatagramPacket;
@@ -136,9 +135,9 @@ public class Monitor extends AppCompatActivity {
         // created, to briefly hint to the user that UI controls
         // are available.
         Thread temperatureServer = new TemperatureServer();
-        Thread backgroundImageServer = new BackgroundImageServer();
+        Thread TCPServer = new TCPServer(8080);
         temperatureServer.start();
-        backgroundImageServer.start();
+        TCPServer.start();
 
 
         delayedHide(100);
@@ -218,47 +217,89 @@ public class Monitor extends AppCompatActivity {
         }
     }
 
-    private class BackgroundImageServer extends Thread {
-        private boolean keepRunning = true;
-        private List<Byte> fetchedPicture;
+    private class TCPServer extends Thread {
+        private ServerSocket server;
+        private final int port;
+
+        public TCPServer(int port) {
+            this.port = port;
+        }
+
         public void run() {
             try {
-                ServerSocket server = new ServerSocket(8080);
-                while(keepRunning) {
-                    Socket connection = server.accept();
-                    InputStream dataStream = connection.getInputStream();
-                    fetchedPicture = new ArrayList<>();
-                    int read = 0;
-                    while((read = dataStream.read()) >= 0){
-                        fetchedPicture.add((byte) read);
-                    }
-                    Byte[] rawPicture = fetchedPicture.toArray(new Byte[0]);
-                    File writtenImage = writeToFile(deBoxByte(rawPicture));
-                    changeBackgroundTo(writtenImage);
+                server = new ServerSocket(port);
+                while (server != null){
+                    Thread worker = new TCPWorker(server.accept());
+                    worker.start();
                 }
+            } catch (IOException e){
+                Log.e("Monitor-TCP", e.getMessage());
+            }
+        }
+
+        public void kill() {
+            try {
                 server.close();
             } catch (IOException e){
-                e.printStackTrace();
+                Log.e("Monitor-TCPServer", e.getMessage());
+            }
+            server = null;
+        }
+    }
+
+    private class TCPWorker extends Thread {
+        private final Socket WORKER_CONNECTION;
+        public TCPWorker(Socket workerConnection){
+            this.WORKER_CONNECTION = workerConnection;
+        }
+
+        public void run(){
+            try {
+                List<Byte> receivedData = readReceivedData();
+                parseData(receivedData);
+            } catch (IOException e){
+                Log.e("Monitor-TCPWorker", e.getMessage());
             }
         }
 
-        private void changeBackgroundTo(File image){
-            final Drawable backgroundImage = Drawable.createFromPath(image.getAbsolutePath());
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    background.setBackground(backgroundImage);
-                }
-            });
-
+        private List<Byte> readReceivedData() throws IOException{
+            InputStream dataStream = WORKER_CONNECTION.getInputStream();
+            List<Byte> receivedData = new ArrayList<>();;
+            int read = 0;
+            while((read = dataStream.read()) >= 0){
+                receivedData.add((byte) read);
+            }
+            return receivedData;
         }
 
-        private byte[] deBoxByte(Byte[] data){
-            byte[] r = new byte[data.length];
-            for(int i = 0; i < data.length; i++){
-                r[i] = data[i];
+        private void parseData(List<Byte> input){
+            byte type = input.get(0);
+            byte[] data = deBoxByte(input.subList(1, input.size()).toArray(new Byte[0]));
+            switch (type){
+                case 0: layoutConfig(data); break;
+                case 1: staticBackgroundImage(data); break;
+                case 2: gifBackgroundImage(data); break;
+                default: Log.e("Monitor-TCPWorker", "Invalid Package received: " + type);
             }
-            return r;
+        }
+
+        private void layoutConfig(byte[] data){
+            throw new UnsupportedOperationException("TBA");
+        }
+
+        private void staticBackgroundImage(byte[] data){
+            try {
+                File image = writeToFile(data);
+                final Drawable backgroundImage = Drawable.createFromPath(image.getAbsolutePath());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        background.setBackground(backgroundImage);
+                    }
+                });
+            } catch (IOException e){
+                Log.e("Monitor-SBackground", e.getMessage());
+            }
         }
 
         private File writeToFile(byte[] data) throws IOException{
@@ -273,8 +314,16 @@ public class Monitor extends AppCompatActivity {
             return outputFile;
         }
 
-        private void kill(){
-            keepRunning = false;
+        private void gifBackgroundImage(byte[] data){
+            throw new UnsupportedOperationException("TBA");
+        }
+
+        private byte[] deBoxByte(Byte[] data){
+            byte[] r = new byte[data.length];
+            for(int i = 0; i < data.length; i++){
+                r[i] = data[i];
+            }
+            return r;
         }
     }
 
