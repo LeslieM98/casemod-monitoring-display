@@ -33,7 +33,7 @@
             android:gravity="center"
             android:text="CPU: 40°C"
             android:textAllCaps="true"
-            android:textColor="#FFECEC"
+            android:textColor="#FFFFFF"
             android:textSize="80sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
