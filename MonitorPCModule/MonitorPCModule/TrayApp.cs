@@ -18,23 +18,23 @@ namespace MonitorPCModule
             trayIcon = new NotifyIcon()
             {
                 Icon = Icon.FromHandle(Resources.icon.GetHicon()),
-                ContextMenu = new ContextMenu(new MenuItem[] {  new MenuItem("Debug", Debug), new MenuItem("Exit", Exit) }),
+                ContextMenu = new ContextMenu(new[] {  new MenuItem("Debug", Debug), new MenuItem("Exit", Exit) }),
                 Visible = true
             };
 
             try
             {
                 IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("configuration.json").Build();
-                var device_hostname = config["device_hostname"];
+                var deviceHostname = config["device_hostname"];
                 var port = int.Parse(config["port"]);
-                var update_interval = int.Parse(config["update_in_ms"]);
+                var updateInterval = int.Parse(config["update_in_ms"]);
                 
-                network = new NetworkTransmitter(device_hostname, port, update_interval);
-                TcpTransmitter configTransmitter = new ConfigTransmitter(device_hostname, port, "layout.json");
+                network = new NetworkTransmitter(deviceHostname, port, updateInterval);
+                TcpTransmitter configTransmitter = new ConfigTransmitter(deviceHostname, port, "layout.json");
                 if (config["background_image_path"] != null)
                 {
                     var backgroundImagePath = config["background_image_path"];
-                    new BackgroundTransmitter(device_hostname, port, backgroundImagePath).Start();
+                    new BackgroundTransmitter(deviceHostname, port, backgroundImagePath).Start();
                 }
 
 
@@ -45,7 +45,7 @@ namespace MonitorPCModule
             {
                 MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 trayIcon.Visible = false;
-                System.Environment.Exit(1);  
+                Environment.Exit(1);  
             }
         }
 
