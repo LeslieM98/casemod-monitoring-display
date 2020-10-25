@@ -10,8 +10,8 @@ namespace MonitorPCModule.Transmitter
 
         protected TcpTransmitter(string hostname, int port)
         {
-            this.Hostname = hostname;
-            this.Port = port;
+            Hostname = hostname;
+            Port = port;
         }
 
         private byte[] BuildPackage()
@@ -20,8 +20,8 @@ namespace MonitorPCModule.Transmitter
             byte[] data = GetData();
 
             byte[] package = new byte[data.Length + 1];
-            package[1] = prefix;
             Array.Copy(data, 0, package, 1, data.Length);
+            package[0] = prefix;
 
             return package;
         }
