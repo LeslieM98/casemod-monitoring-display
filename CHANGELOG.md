@@ -8,11 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-### Android App
+#### Android App
 - Textfields can now be moved vertically.
 - Textfields can change colour.
 
-### Desktop Client
+#### Desktop Client
 - New configuration file `layout.json` that controls the layout of the Android app.
 
 ## [0.2.0] - 2020-10-24
