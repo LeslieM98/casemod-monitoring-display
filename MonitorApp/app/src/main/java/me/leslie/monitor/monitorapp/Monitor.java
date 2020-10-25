@@ -7,11 +7,16 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -122,8 +127,10 @@ public class Monitor extends AppCompatActivity {
         gpuTemp = findViewById(R.id.GPU_TEMP);
         background = findViewById(R.id.fullscreen_content);
 
-        cpuTemp.setText("CPU: NO DATA");
-        gpuTemp.setText("GPU: NO DATA");
+        cpuTemp.setText("XX");
+        // cpuTemp.setText("CPU: NO DATA");
+        gpuTemp.setText("O");
+        // gpuTemp.setText("GPU: NO DATA");
 
     }
 
@@ -284,7 +291,71 @@ public class Monitor extends AppCompatActivity {
         }
 
         private void layoutConfig(byte[] data){
-            throw new UnsupportedOperationException("TBA");
+            try {
+                String json = convertByteArrayToString(data);
+                JSONObject parsedJson = new JSONObject(json);
+                final int gpuYFromBottom = parsedJson.getInt("gpu_y_from_bottom");
+                final int cpuYFromTop = parsedJson.getInt("cpu_y_from_top");
+                String readColour = parsedJson.getString("text_colour");
+                final int textColour = parseInt(readColour);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ConstraintLayout.LayoutParams gpuConstraints = (ConstraintLayout.LayoutParams) gpuTemp.getLayoutParams();
+                            gpuConstraints.bottomMargin = gpuYFromBottom;
+                            Log.d("Monitor-LayoutConfig", "gpu: " + gpuConstraints.bottomToBottom);
+                            gpuTemp.requestLayout();
+                            gpuTemp.setTextColor(textColour);
+                        } catch (Throwable e){
+                            Log.e("Monitor-LayoutConfig", e.getMessage());
+                        }
+                    }
+                });
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ConstraintLayout.LayoutParams cpuConstraints = (ConstraintLayout.LayoutParams) cpuTemp.getLayoutParams();
+                            cpuConstraints.topMargin = cpuYFromTop;
+                            Log.d("Monitor-LayoutConfig", "cpu: " + cpuConstraints.topToTop);
+                            cpuTemp.requestLayout();
+                            cpuTemp.setTextColor(textColour);
+                        } catch (Throwable e){
+                            Log.e("Monitor-LayoutConfig", e.getMessage());
+                        }
+                    }
+                });
+            } catch (Throwable e){
+                Log.e("Monitor-LayoutConfig", e.getMessage());
+            }
+        }
+
+        private int parseInt(String hex){
+            String upperNibble = new StringBuilder().append(hex.charAt(0)).toString();
+            String rest = hex.substring(1);
+            int sign = 0b1000 & Integer.parseInt(upperNibble, 16);
+            String unsigned = new StringBuilder()
+                    .append(Integer.toString(0b0111 & Integer.parseInt(upperNibble, 16), 16))
+                    .append(rest)
+                    .toString();
+
+            if(sign != 0){
+                // is Negative
+                return Integer.parseInt(unsigned, 16) | 0b10000000000000000000000000000000;
+            } else {
+                // is Positive
+                return Integer.parseInt(unsigned);
+            }
+        }
+
+        private String convertByteArrayToString(byte[] data){
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < data.length; i++){
+                sb.append((char) data[i]);
+            }
+            return sb.toString();
         }
 
         private void staticBackgroundImage(byte[] data){
