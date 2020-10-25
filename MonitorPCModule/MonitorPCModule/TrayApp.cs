@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
-using MonitorPCModule.Transmitter.Hardware;
+using MonitorPCModule.Transmitter;
 using MonitorPCModule.Transmitter.Properties;
 
-namespace MonitorPCModule.Transmitter
+namespace MonitorPCModule
 {
     class TrayApp : ApplicationContext
     {
@@ -19,18 +18,19 @@ namespace MonitorPCModule.Transmitter
             trayIcon = new NotifyIcon()
             {
                 Icon = Icon.FromHandle(Resources.icon.GetHicon()),
-                ContextMenu = new ContextMenu(new MenuItem[] { new MenuItem("Exit", Exit), new MenuItem("Debug", Debug) }),
+                ContextMenu = new ContextMenu(new MenuItem[] {  new MenuItem("Debug", Debug), new MenuItem("Exit", Exit) }),
                 Visible = true
             };
 
             try
             {
                 IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("configuration.json").Build();
-                string layout_json = File.ReadAllText("layout.json");
                 var device_hostname = config["device_hostname"];
                 var port = int.Parse(config["port"]);
                 var update_interval = int.Parse(config["update_in_ms"]);
                 
+                network = new NetworkTransmitter(device_hostname, port, update_interval);
+                TcpTransmitter configTransmitter = new ConfigTransmitter(device_hostname, port, "layout.json");
                 if (config["background_image_path"] != null)
                 {
                     var backgroundImagePath = config["background_image_path"];
@@ -38,10 +38,7 @@ namespace MonitorPCModule.Transmitter
                 }
 
 
-                TcpTransmitter configTransmitter = new ConfigTransmitter(device_hostname, port, layout_json);
                 configTransmitter.Start();
-                network = new NetworkTransmitter(device_hostname, port, update_interval);
-                
                 network.Start();
             }
             catch (Exception e)
