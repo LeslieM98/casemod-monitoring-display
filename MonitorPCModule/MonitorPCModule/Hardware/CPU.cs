@@ -4,7 +4,7 @@ using OpenHardwareMonitor.Hardware;
 using System;
 using System.Management.Instrumentation;
 
-namespace HardwareTemperature
+namespace MonitorPCModule.Transmitter.Hardware
 {
     class CPU
     {

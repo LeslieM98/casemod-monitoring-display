@@ -1,4 +1,4 @@
-﻿namespace MonitorPCModule
+﻿namespace MonitorPCModule.Transmitter
 {
     partial class Form1
     {

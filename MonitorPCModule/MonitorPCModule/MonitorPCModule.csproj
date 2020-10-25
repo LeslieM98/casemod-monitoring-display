@@ -103,11 +103,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackgroundTransmitter.cs" />
-    <Compile Include="LayoutConfigTransmitter.cs" />
-    <Compile Include="CPU.cs" />
-    <Compile Include="GPU.cs" />
-    <Compile Include="NetworkTransmitter.cs" />
+    <Compile Include="Hardware\CPU.cs" />
+    <Compile Include="Hardware\GPU.cs" />
+    <Compile Include="Transmitter\BackgroundTransmitter.cs" />
+    <Compile Include="Transmitter\LayoutConfigTransmitter.cs" />
+    <Compile Include="Transmitter\NetworkTransmitter.cs" />
     <Compile Include="TrayApp.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

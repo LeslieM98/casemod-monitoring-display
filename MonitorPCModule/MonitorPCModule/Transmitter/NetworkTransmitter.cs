@@ -2,10 +2,10 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Timers;
+using MonitorPCModule.Transmitter.Hardware;
 
-namespace HardwareTemperature
+namespace MonitorPCModule.Transmitter
 {
     class NetworkTransmitter
     {

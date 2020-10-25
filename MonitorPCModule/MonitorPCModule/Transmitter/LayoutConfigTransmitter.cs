@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 
-namespace MonitorPCModule
+namespace MonitorPCModule.Transmitter
 {
     public class ConfigTransmitter
     {

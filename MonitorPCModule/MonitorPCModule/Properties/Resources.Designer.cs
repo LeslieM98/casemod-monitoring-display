@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MonitorPCModule.Properties {
+namespace MonitorPCModule.Transmitter.Properties {
     using System;
     
     

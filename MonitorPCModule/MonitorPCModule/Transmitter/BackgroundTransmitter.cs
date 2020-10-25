@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Timers;
 
-namespace MonitorPCModule
+namespace MonitorPCModule.Transmitter
 {
     public class BackgroundTransmitter
     {

@@ -1,12 +1,12 @@
-﻿using HardwareTemperature;
-using Microsoft.Extensions.Configuration;
-using MonitorPCModule.Properties;
+﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using MonitorPCModule.Transmitter.Hardware;
+using MonitorPCModule.Transmitter.Properties;
 
-namespace MonitorPCModule
+namespace MonitorPCModule.Transmitter
 {
     class TrayApp : ApplicationContext
     {
