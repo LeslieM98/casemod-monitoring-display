@@ -4,21 +4,21 @@ namespace MonitorPCModule.Transmitter
 {
     public class BackgroundTransmitter : TcpTransmitter
     {
-        private readonly string _jpgPath;
+        private readonly string _backgroundPath;
 
-        public BackgroundTransmitter(string hostname, int port, string jpgPath) : base(hostname, port)
+        public BackgroundTransmitter(string hostname, int port, string backgroundPath) : base(hostname, port)
         {
-            _jpgPath = jpgPath;
+            _backgroundPath = backgroundPath.Trim();
         }
 
         protected override PackageType GetPackageType()
         {
-            return PackageType.StaticBackgroundImage;
+            return _backgroundPath.EndsWith(".gif") ? PackageType.GifBackgroundImage : PackageType.StaticBackgroundImage;
         }
 
         protected override byte[] GetData()
         {
-            return File.ReadAllBytes(_jpgPath);
+            return File.ReadAllBytes(_backgroundPath);
         }
     }
 }
