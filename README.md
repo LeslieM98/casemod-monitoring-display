@@ -7,6 +7,7 @@ This Application works by periodically fetching temperatures from the system and
 The android device listens for udp on port 8080 .
 
 ### Setup
+#### Obligatory configuration file
 You need to create a `configuration.json` in the same directory as the executable:
 ```json
 // configuration.json
@@ -20,7 +21,17 @@ You need to create a `configuration.json` in the same directory as the executabl
 ```
 The last configuration string is optional and can be left out. The app will still work as expected.
 
-
+#### Optional layout configuration
+Create a file called `layout.json` in the same directory as the executable:
+```json
+// layout.json
+{
+    "gpu_y_from_bottom": 150,
+    "cpu_y_from_top": 150,
+    "text_colour":  "AARRGGBB"
+}
+```
+Note: `text_colour` is a hex colourvalue but leave out the `#`.
 ## Pictures
 ![Finished build](./images/finished.jpg)
 
