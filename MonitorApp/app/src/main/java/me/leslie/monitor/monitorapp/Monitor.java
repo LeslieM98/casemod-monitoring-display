@@ -319,16 +319,8 @@ public class Monitor extends AppCompatActivity {
                             Log.d("Monitor-LayoutConfig", "gpu: " + gpuConstraints.bottomToBottom);
                             gpuTemp.requestLayout();
                             gpuTemp.setTextColor(textColour);
-                        } catch (Throwable e){
-                            Log.e("Monitor-LayoutConfig", e.getMessage());
-                        }
-                    }
-                });
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
+
                             ConstraintLayout.LayoutParams cpuConstraints = (ConstraintLayout.LayoutParams) cpuTemp.getLayoutParams();
                             cpuConstraints.topMargin = cpuYFromTop;
                             Log.d("Monitor-LayoutConfig", "cpu: " + cpuConstraints.topToTop);
