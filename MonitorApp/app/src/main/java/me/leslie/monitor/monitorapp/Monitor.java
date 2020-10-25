@@ -127,10 +127,8 @@ public class Monitor extends AppCompatActivity {
         gpuTemp = findViewById(R.id.GPU_TEMP);
         background = findViewById(R.id.fullscreen_content);
 
-        cpuTemp.setText("XX");
-        // cpuTemp.setText("CPU: NO DATA");
-        gpuTemp.setText("O");
-        // gpuTemp.setText("GPU: NO DATA");
+        cpuTemp.setText("CPU: NO DATA");
+        gpuTemp.setText("GPU: NO DATA");
 
     }
 
