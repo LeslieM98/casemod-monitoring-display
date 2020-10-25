@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackgroundTransmitter.cs" />
+    <Compile Include="LayoutConfigTransmitter.cs" />
     <Compile Include="CPU.cs" />
     <Compile Include="GPU.cs" />
     <Compile Include="NetworkTransmitter.cs" />

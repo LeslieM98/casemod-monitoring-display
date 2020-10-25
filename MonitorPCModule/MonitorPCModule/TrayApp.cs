@@ -2,11 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using MonitorPCModule.Properties;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace MonitorPCModule
@@ -29,6 +26,7 @@ namespace MonitorPCModule
             try
             {
                 IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("configuration.json").Build();
+                string layout_json = File.ReadAllText("layout.json");
                 var device_hostname = config["device_hostname"];
                 var port = int.Parse(config["port"]);
                 var update_interval = int.Parse(config["update_in_ms"]);
@@ -40,7 +38,10 @@ namespace MonitorPCModule
                 }
 
 
+                ConfigTransmitter configTransmitter = new ConfigTransmitter(device_hostname, port, layout_json);
+                configTransmitter.Start();
                 network = new NetworkTransmitter(device_hostname, port, update_interval);
+                
                 network.Start();
             }
             catch (Exception e)
