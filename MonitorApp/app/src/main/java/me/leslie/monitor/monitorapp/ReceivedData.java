@@ -34,7 +34,6 @@ public class ReceivedData {
     public byte[] getData() throws IOException {
         InputStream is = new FileInputStream(cache);
         List<Byte> read = new ArrayList<>();
-        is.read();
         int b;
         while((b = is.read()) >= 0){
             read.add((byte) b);
