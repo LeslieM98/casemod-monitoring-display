@@ -38,7 +38,7 @@ namespace MonitorPCModule.Transmitter
                 }
 
 
-                ConfigTransmitter configTransmitter = new ConfigTransmitter(device_hostname, port, layout_json);
+                TcpTransmitter configTransmitter = new ConfigTransmitter(device_hostname, port, layout_json);
                 configTransmitter.Start();
                 network = new NetworkTransmitter(device_hostname, port, update_interval);
                 

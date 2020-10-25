@@ -108,6 +108,7 @@
     <Compile Include="Transmitter\BackgroundTransmitter.cs" />
     <Compile Include="Transmitter\LayoutConfigTransmitter.cs" />
     <Compile Include="Transmitter\NetworkTransmitter.cs" />
+    <Compile Include="Transmitter\TCPTransmitter.cs" />
     <Compile Include="TrayApp.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
