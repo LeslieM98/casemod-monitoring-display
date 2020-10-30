@@ -11,6 +11,9 @@
 # Jetbrains
 .idea
 
+# External Libs
+MonitorPCModule\MonitorPCModule\external
+
 # User-specific files
 *.rsuser
 *.suo
