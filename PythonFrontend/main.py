@@ -22,7 +22,7 @@ def recv_all(sock):
     while True:
         part = sock.recv(BUFF_SIZE)
         data += part
-        if len(part) < BUFF_SIZE:
+        if not part:
             break
     Logger.info("Network: Received {0} bytes".format(len(data)))
     return data
@@ -183,7 +183,8 @@ class ConfigurationThread(threading.Thread):
             self.gif_payload(payload)
 
     def layout_payload(self, payload):
-        json_data = json.loads(payload.decode('ascii'))
+        decoded_payload = payload.decode('ascii')
+        json_data = json.loads(decoded_payload)
 
         gpu_y_from_bottom = json_data['gpu_y_from_bottom']
         cpu_y_from_top = json_data['cpu_y_from_top']
