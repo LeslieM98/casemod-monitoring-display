@@ -1,0 +1,22 @@
+#:kivy 2.0
+<MainView>:
+    Image:
+        id: GIF_DISPLAY
+        source: root.gif_path
+        anim_delay: 0.10
+        allow_stretch: True
+        keep_ratio: False
+
+    Label:
+        id: CPU_TEMP
+        text: root.cpu_temp
+        pos_hint: {'center_y': root.cpu_y_from_top}
+        markup: True
+        color: root.text_colour
+
+    Label:
+        id: GPU_TEMP
+        text: root.gpu_temp
+        pos_hint: {'center_y': root.gpu_y_from_bottom}
+        markup: True
+        color: root.text_colour
