@@ -1,3 +1,4 @@
+#! /bin/python3
 import struct
 import threading
 import socket
@@ -15,16 +16,17 @@ from kivy.properties import StringProperty, NumericProperty, ColorProperty
 from kivy.logger import Logger
 from kivy.uix.floatlayout import FloatLayout
 
-
+hostname = 'raspberrypi'
 def recv_all(sock):
-    BUFF_SIZE = 512
+    BUFF_SIZE = 16384
     data = b''
     while True:
         part = sock.recv(BUFF_SIZE)
+        Logger.debug("Network: Received {0} bytes".format(len(part)))
         data += part
         if not part:
             break
-    Logger.info("Network: Received {0} bytes".format(len(data)))
+    Logger.info("Network: {1} Received {0} bytes".format(len(data), datetime.now().strftime("%H:%M:%S")))
     return data
 
 class MainView(FloatLayout):
@@ -113,7 +115,7 @@ class TemperatureThread(threading.Thread):
         threading.Thread.__init__(self)
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        server_address = ('localhost', port)
+        server_address = (hostname, port)
         Logger.info('Network: Temperature service starting up on {} port {}'.format(*server_address))
         sock.bind(server_address)
 
@@ -147,7 +149,7 @@ class ConfigurationThread(threading.Thread):
         threading.Thread.__init__(self)
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_address = ('localhost', port)
+        server_address = (hostname, port)
         sock.bind(server_address)
         sock.listen(2)
         Logger.info('Network: Configuration service starting up on {} port {}'.format(*server_address))
