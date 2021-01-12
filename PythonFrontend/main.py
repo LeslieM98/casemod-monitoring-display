@@ -86,7 +86,7 @@ class TemperatureMonitorApp(App):
 
     @mainthread
     def change_cpu_temp(self, val):
-        self.view.change_gpu_temp(val)
+        self.view.change_cpu_temp(val)
 
     @mainthread
     def change_text_colour(self, val):
