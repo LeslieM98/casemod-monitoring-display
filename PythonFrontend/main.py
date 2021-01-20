@@ -16,7 +16,7 @@ from kivy.properties import StringProperty, NumericProperty, ColorProperty
 from kivy.logger import Logger
 from kivy.uix.floatlayout import FloatLayout
 
-hostname = 'raspberrypi'
+hostname = socket.gethostname()
 def recv_all(sock):
     BUFF_SIZE = 16384
     data = b''
