@@ -15,8 +15,9 @@ from kivy.clock import Clock, mainthread
 from kivy.properties import StringProperty, NumericProperty, ColorProperty
 from kivy.logger import Logger
 from kivy.uix.floatlayout import FloatLayout
+import netifaces as ni
 
-hostname = socket.gethostname()
+hostname = ni.ifaddresses("wlan0")[ni.AF_INET][0]['addr']
 def recv_all(sock):
     BUFF_SIZE = 16384
     data = b''
