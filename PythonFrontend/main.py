@@ -49,11 +49,11 @@ class MainView(FloatLayout):
 
     @mainthread
     def change_gpu_temp(self, temp_in_celsius):
-        self.gpu_temp = '[size=40]GPU: {0}°C[/size]'.format(temp_in_celsius)
+        self.gpu_temp = '[size=50]GPU: {0}°C[/size]'.format(temp_in_celsius)
 
     @mainthread
     def change_cpu_temp(self, temp_in_celsius):
-        self.cpu_temp = '[size=40]CPU: {0}°C[/size]'.format(temp_in_celsius)
+        self.cpu_temp = '[size=50]CPU: {0}°C[/size]'.format(temp_in_celsius)
 
     @mainthread
     def change_text_colour(self, value):
